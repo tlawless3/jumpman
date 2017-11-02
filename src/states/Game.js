@@ -12,6 +12,7 @@ var assets = require('../assets');
 var Bricks = require('../objects/Bricks');
 var Jumpman = require('../objects/Jumpman');
 var brickGroup;
+var jumpmanSprite;
 
 exports.create = function (game) {
   //  TODO: Replace this content with really cool game code here :)
@@ -24,34 +25,44 @@ exports.create = function (game) {
   //adds bricks, the platforms, to game
   //ground level
   for(var i = 0; i < 18; i++){
-    brickGroup.create((new Bricks(game , i * 45, 555)));
+    var brick = game.add.existing(new Bricks(game , i * 45, 555));
+    brickGroup.add(brick);
   }
   //lower left
   for(var i = 0; i < 4; i++){
-    game.add.existing(new Bricks(game, i * 45, 400));
+    var brick = game.add.existing(new Bricks(game, i * 45, 400));
+    brickGroup.add(brick);
   }
   //lower right
   for(var i = 0; i < 4; i++){
-    game.add.existing(new Bricks(game, 800 -(i * 45 + 45), 400));
+    var brick = game.add.existing(new Bricks(game, 800 -(i * 45 + 45), 400));
+    brickGroup.add(brick);
   }
   //center
   for(var i = 0; i < 10; i++){
-    game.add.existing(new Bricks(game, 180 + i * 45, 250));
+    var brick = game.add.existing(new Bricks(game, 180 + i * 45, 250));
+    brickGroup.add(brick);
   }
   //top left
   for(var i = 0; i < 4; i++){
-    game.add.existing(new Bricks(game, i * 45, 100));
+    var brick = game.add.existing(new Bricks(game, i * 45, 100));
+    brickGroup.add(brick);
   }
   //top right
   for(var i = 0; i < 4; i++){
-    game.add.existing(new Bricks(game, 800 - (i * 45 + 45), 100));
+    var brick = game.add.existing(new Bricks(game, 800 - (i * 45 + 45), 100));
+    brickGroup.add(brick);
   }
 
-  game.add.existing(new Jumpman(game, 400, 203));
+  jumpmanSprite = game.add.existing(new Jumpman(game, 400, 203));
+
+
 };
 
 exports.update = function (game) {
-  game.physics.arcade.collide(Bricks, Jumpman, function(){
-    console.log("collide");
-  });
+  game.physics.arcade.collide(brickGroup, jumpmanSprite);
+  //adds jump on spacebar and 'up'
+  var jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  jumpKey.onDown.add(this.Jumpman.jump, this.Jumpman);
+  this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 }
