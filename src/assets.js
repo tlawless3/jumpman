@@ -39,4 +39,7 @@ exports.gameAssets = [{
 }, {
   key:'enemy',
   type:'image'
+}, {
+  key: 'killbox',
+  type: 'image'
 }];

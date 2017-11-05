@@ -12,9 +12,13 @@ var assets = require('../assets');
 var Bricks = require('../objects/Bricks');
 var Jumpman = require('../objects/Jumpman');
 var Enemy = require('../objects/Enemy');
+var Killbox = require('../objects/Killbox');
 var brickGroup;
 var jumpmanSprite;
 var enemyGroup;
+var killboxes;
+var killboxLeft;
+var killboxRight
 //percentage needs to be > than this to spawn enemy
 var spawnChance = .7;
 //speed of enemies
@@ -26,6 +30,12 @@ var createJumpman;
 exports.create = function (game) {
   //background image
   game.add.image(0, 0, 'sky')
+  //"killboxes" for enemies
+  killboxes = game.add.group();
+  killboxLeft = game.add.existing(new Killbox(game, 0, 505));
+  killboxes.add(killboxLeft);
+  killboxRight = game.add.existing(new Killbox(game, 755, 505));
+  killboxes.add(killboxRight);
 
   brickGroup = game.add.group();
   //adds bricks, the platforms, to game
@@ -90,18 +100,19 @@ exports.create = function (game) {
 exports.update = function (game) {
   game.physics.arcade.collide(brickGroup, jumpmanSprite);
   game.physics.arcade.collide(enemyGroup, brickGroup);
+  game.physics.arcade.collide(enemyGroup, killboxes, function(enemyGroup, killboxes){
+    enemyGroup.kill();
+    console.log("collide");
+  });
   game.physics.arcade.collide(enemyGroup, jumpmanSprite, function(jumpmanSprite, enemyGroup){
     if(enemyGroup.body.touching.up && jumpmanSprite.body.touching.down){
       enemyGroup.destroy();
       score += 1;
-    } else if (enemyGroup.body.touching.right || enemyGroup.body.touching.left ||
-    enemyGroup.body.touching.down){
+    } else if ((enemyGroup.body.touching.right || enemyGroup.body.touching.left || enemyGroup.body.touching.down) && (jumpmanSprite.body.touching.right || jumpmanSprite.body.touching.left || jumpmanSprite.body.touching.up)){
       jumpmanSprite.kill();
       enemyGroup.destroy();
       score = 0;
       createJumpman();
     }
   });
-
-  if(enemyGroup.y >= 719 && (enemyGroup.x === 0 || enemyGroup.x === 764))
 }
