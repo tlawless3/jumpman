@@ -8,6 +8,8 @@
 
 'use strict';
 
+var cursors;
+
 function Jumpman(game, x, y) {
   Phaser.Sprite.call(this, game, x, y, 'jumpman');
 
@@ -28,9 +30,7 @@ function Jumpman(game, x, y) {
   jumpKey.onDown.add(this.jump, this);
   this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   //moving left/right
-  var cursors = game.input.keyboard.createCursorKeys();
-  cursors.left.onDown.add(this.moveLeft, this);
-  cursors.right.onDown.add(this.moveRight, this);
+  cursors = game.input.keyboard.createCursorKeys();
   cursors.left.onUp.add(this.stopMove, this);
   cursors.right.onUp.add(this.stopMove, this);
 }
@@ -38,7 +38,12 @@ Jumpman.prototype = Object.create(Phaser.Sprite.prototype);
 module.exports = Jumpman.prototype.constructor = Jumpman;
 
 Jumpman.prototype.update = function (game) {
-
+  if(cursors.left.isDown){
+    this.moveLeft();
+  }
+  if(cursors.right.isDown){
+    this.moveRight();
+  }
 };
 
 //changes status to indicate collision with brick sprite
@@ -48,7 +53,7 @@ Jumpman.prototype.changeCollide = function(){
 
 //jump function
 Jumpman.prototype.jump = function (){
-  if(this.collided){
+  if(this.collided && this.body.velocity.y === 0){
     this.body.velocity.y = -450;
     this.collided = false;
   }
