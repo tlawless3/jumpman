@@ -18,7 +18,8 @@ var jumpmanSprite;
 var enemyGroup;
 var killboxes;
 var killboxLeft;
-var killboxRight
+var killboxRight;
+var scoreText;
 //percentage needs to be > than this to spawn enemy
 var spawnChance = .7;
 //speed of enemies
@@ -36,6 +37,8 @@ exports.create = function (game) {
   killboxes.add(killboxLeft);
   killboxRight = game.add.existing(new Killbox(game, 755, 505));
   killboxes.add(killboxRight);
+
+  scoreText = game.add.text(5, 5, "Score: 0", {fontSize: '32px', fill: '#000'});
 
   brickGroup = game.add.group();
   //adds bricks, the platforms, to game
@@ -100,19 +103,38 @@ exports.create = function (game) {
 exports.update = function (game) {
   game.physics.arcade.collide(brickGroup, jumpmanSprite);
   game.physics.arcade.collide(enemyGroup, brickGroup);
+  //kills enemies when they collide with bottom left/right
   game.physics.arcade.collide(enemyGroup, killboxes, function(enemyGroup, killboxes){
     enemyGroup.kill();
-    console.log("collide");
   });
+  //crushing/dying
   game.physics.arcade.collide(enemyGroup, jumpmanSprite, function(jumpmanSprite, enemyGroup){
     if(enemyGroup.body.touching.up && jumpmanSprite.body.touching.down){
       enemyGroup.destroy();
       score += 1;
+      scoreText.text = "Score: " + score;
     } else if ((enemyGroup.body.touching.right || enemyGroup.body.touching.left || enemyGroup.body.touching.down) && (jumpmanSprite.body.touching.right || jumpmanSprite.body.touching.left || jumpmanSprite.body.touching.up)){
       jumpmanSprite.kill();
       enemyGroup.destroy();
       score = 0;
+      scoreText.text = "Score: " + score;
       createJumpman();
     }
   });
+  //game conditions changing with score
+  if(score === 2){
+    spawnChance = .6;
+  } else if(score === 5){
+    enemySpeed = 250;
+  } else if(score === 10){
+    spawnChance = .55;
+    enemySpeed = 275;
+  } else if(score === 15){
+    spawnChance = .5;
+    enemySpeed = 290;
+  } else if(score === 20){
+    spawnChance = .4;
+    enemySpeed = 300;
+  }
+
 }
