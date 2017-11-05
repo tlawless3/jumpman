@@ -13,6 +13,7 @@ function Jumpman(game, x, y) {
 
   game.physics.enable(this, Phaser.Physics.ARCADE);
   this.enableBody = true;
+  this.body.collideWorldBounds = true;
   this.body.gravity.y = 550;
 
   this.jumping = false;
@@ -26,6 +27,12 @@ function Jumpman(game, x, y) {
   var jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   jumpKey.onDown.add(this.jump, this);
   this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+  //moving left/right
+  var cursors = game.input.keyboard.createCursorKeys();
+  cursors.left.onDown.add(this.moveLeft, this);
+  cursors.right.onDown.add(this.moveRight, this);
+  cursors.left.onUp.add(this.stopMove, this);
+  cursors.right.onUp.add(this.stopMove, this);
 }
 Jumpman.prototype = Object.create(Phaser.Sprite.prototype);
 module.exports = Jumpman.prototype.constructor = Jumpman;
@@ -40,9 +47,29 @@ Jumpman.prototype.changeCollide = function(){
 };
 
 //jump function
-Jumpman.prototype.jump = function (game){
+Jumpman.prototype.jump = function (){
   if(this.collided){
     this.body.velocity.y = -450;
     this.collided = false;
   }
 };
+
+Jumpman.prototype.moveLeft = function (){
+  if(!this.collided){
+    this.body.velocity.x = -100;
+  } else {
+    this.body.velocity.x = -200;
+  }
+};
+
+Jumpman.prototype.moveRight = function (){
+  if(!this.collided){
+    this.body.velocity.x = 100;
+  } else {
+    this.body.velocity.x = 200;
+  }
+}
+
+Jumpman.prototype.stopMove = function () {
+  this.body.velocity.x = 0;
+}
