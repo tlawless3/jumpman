@@ -19,6 +19,9 @@ var enemyGroup;
 var spawnChance = .7;
 //speed of enemies
 var enemySpeed = 200;
+var score = 0;
+//creates a new jumpman
+var createJumpman;
 
 exports.create = function (game) {
   //background image
@@ -59,6 +62,10 @@ exports.create = function (game) {
 
   jumpmanSprite = game.add.existing(new Jumpman(game, 400, 203));
 
+  createJumpman = function() {
+    jumpmanSprite = game.add.existing(new Jumpman(game, 400, 203));
+  }
+
   //spawns enemies in a semi random matter
   enemyGroup = game.add.group();
 
@@ -83,4 +90,18 @@ exports.create = function (game) {
 exports.update = function (game) {
   game.physics.arcade.collide(brickGroup, jumpmanSprite);
   game.physics.arcade.collide(enemyGroup, brickGroup);
+  game.physics.arcade.collide(enemyGroup, jumpmanSprite, function(jumpmanSprite, enemyGroup){
+    if(enemyGroup.body.touching.up && jumpmanSprite.body.touching.down){
+      enemyGroup.destroy();
+      score += 1;
+    } else if (enemyGroup.body.touching.right || enemyGroup.body.touching.left ||
+    enemyGroup.body.touching.down){
+      jumpmanSprite.kill();
+      enemyGroup.destroy();
+      score = 0;
+      createJumpman();
+    }
+  });
+
+  if(enemyGroup.y >= 719 && (enemyGroup.x === 0 || enemyGroup.x === 764))
 }
