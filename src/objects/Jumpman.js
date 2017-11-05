@@ -55,19 +55,11 @@ Jumpman.prototype.jump = function (){
 };
 
 Jumpman.prototype.moveLeft = function (){
-  if(!this.collided){
-    this.body.velocity.x = -100;
-  } else {
-    this.body.velocity.x = -200;
-  }
+  this.body.velocity.x = -200;
 };
 
 Jumpman.prototype.moveRight = function (){
-  if(!this.collided){
-    this.body.velocity.x = 100;
-  } else {
-    this.body.velocity.x = 200;
-  }
+  this.body.velocity.x = 200;
 }
 
 Jumpman.prototype.stopMove = function () {
