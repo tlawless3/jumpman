@@ -55,14 +55,8 @@ exports.create = function (game) {
   }
 
   jumpmanSprite = game.add.existing(new Jumpman(game, 400, 203));
-
-
 };
 
 exports.update = function (game) {
   game.physics.arcade.collide(brickGroup, jumpmanSprite);
-  //adds jump on spacebar and 'up'
-  var jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-  jumpKey.onDown.add(this.Jumpman.jump, this.Jumpman);
-  this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 }
