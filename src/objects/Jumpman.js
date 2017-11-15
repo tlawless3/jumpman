@@ -9,6 +9,7 @@
 'use strict';
 
 var cursors;
+var jumpKey
 
 function Jumpman(game, x, y) {
   Phaser.Sprite.call(this, game, x, y, 'jumpman');
@@ -18,6 +19,7 @@ function Jumpman(game, x, y) {
   this.body.collideWorldBounds = true;
   this.body.gravity.y = 550;
 
+  this.maxJump = false;
   this.jumping = false;
   this.collided = true;
 
@@ -26,7 +28,7 @@ function Jumpman(game, x, y) {
   this.body.onCollide.add(this.changeCollide, this);
 
   //jump with spacebar
-  var jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   jumpKey.onDown.add(this.jump, this);
   this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   //moving left/right
@@ -44,6 +46,9 @@ Jumpman.prototype.update = function (game) {
   if(cursors.right.isDown){
     this.moveRight();
   }
+  if(jumpKey.isDown){
+    this.longerJump();
+  }
 };
 
 //changes status to indicate collision with brick sprite
@@ -54,10 +59,21 @@ Jumpman.prototype.changeCollide = function(){
 //jump function
 Jumpman.prototype.jump = function (){
   if(this.collided && this.body.velocity.y === 0){
-    this.body.velocity.y = -450;
+    this.maxJump = false;
+    this.body.velocity.y = -80;
     this.collided = false;
   }
 };
+
+Jumpman.prototype.longerJump = function(){
+  if(!this.collided && this.body.velocity.y >= -450 && !this.maxJump){
+    this.body.velocity.y += -40;
+  }
+  var that = this;
+  setTimeout(function(){
+    that.maxJump = true;
+  }, 150)
+}
 
 Jumpman.prototype.moveLeft = function (){
   this.body.velocity.x = -200;
